@@ -7,7 +7,11 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {colors: {
+        'brand-purple': '#6d28d9', // Exemplo de roxo (ajuste se souber o hex exato)
+        'header-bg': '#f3f4f6',     // Exemplo de fundo (cinza claro)
+      },
+    },
   },
   plugins: [],
 }

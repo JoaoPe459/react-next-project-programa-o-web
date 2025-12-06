@@ -97,7 +97,7 @@ export default function LoginPage() {
               }`}
               {...register("password", { 
                 required: "Digite sua senha",
-                minLength: { value: 6, message: "Mínimo 6 caracteres" }
+                minLength: { value: 8, message: "Mínimo 8 caracteres" }
               })}
             />
             <LockIcon />

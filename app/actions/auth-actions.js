@@ -14,8 +14,8 @@ export async function registerUserAction(data) {
     errors.email = "E-mail inválido.";
   }
 
-  if (!data.senha || data.senha.length < 6) {
-    errors.senha = "Senha deve ter no mínimo 6 caracteres.";
+  if (!data.senha || data.senha.length < 8) {
+    errors.senha = "Senha deve ter no mínimo 8 caracteres.";
   }
 
   // Se houver erros, retorna imediatamente
