@@ -1,3 +1,47 @@
+# Dependências
 node_modules/
-package-lock.json
+.pnp/
+.pnp.js
+
+# Builds do Next.js
 .next/
+out/
+dist/
+
+# Cache
+.cache/
+.next/cache/
+pnpm-store/
+**/.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# Ambiente
+.env
+.env.*.local
+.env.local
+
+# Sistema
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Arquivos do sistema operacional
+Thumbs.db
+.DS_Store
+
+# Build do TypeScript
+*.tsbuildinfo
+
+# Arquivos do Editor (Jetbrains)
+.idea/
+
+# Arquivos de preview
+coverage/
