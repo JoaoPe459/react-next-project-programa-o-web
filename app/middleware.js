@@ -45,6 +45,7 @@ export const config = {
     "/fornecedor/:path*",
     "/usuario/:path*",
     "/perfil/:path*",
-    "/produtos/novo"
+    "/produtos/novo",
+      "/cupons/:path*",
   ]
 }
