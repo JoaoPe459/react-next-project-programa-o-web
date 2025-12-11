@@ -14,7 +14,7 @@ import {
     Store,
     Menu,
     X,
-    LogIn
+    Ticket // Ícone para cupons
 } from 'lucide-react';
 
 export default function Header() {
@@ -25,17 +25,15 @@ export default function Header() {
     const isLoading = status === "loading";
     const isAuthenticated = status === "authenticated";
     const userRole = session?.user?.role;
-    // Pega o primeiro nome para não ficar muito longo no header
+
     const userName = session?.user?.nome?.split(' ')[0] || session?.user?.email?.split('@')[0] || "Visitante";
 
     const handleLogout = async () => {
         await signOut({ callbackUrl: '/login' });
     };
 
-    // Helper para verificar link ativo
     const isActive = (path) => pathname === path;
 
-    // Definição dos links para facilitar a renderização (DRY)
     const renderNavLinks = (mobile = false) => {
         const baseClass = mobile
             ? "flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-gray-200"
@@ -44,6 +42,19 @@ export default function Header() {
         const activeClass = mobile
             ? "bg-brand-purple/20 text-brand-purple font-semibold"
             : "text-white font-semibold";
+
+        // --- ADICIONADO: Rotas de ADMIN ---
+        if (isAuthenticated && userRole === 'ROLE_ADMIN') {
+            return (
+                <>
+                    <Link href="/cupons" className={`${baseClass} ${isActive('/cupons') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
+                        <Ticket className="w-5 h-5" />
+                        <span>Gerenciar Cupons</span>
+                    </Link>
+                    {/* Pode adicionar outros links de admin aqui */}
+                </>
+            );
+        }
 
         // Links de Fornecedor
         if (isAuthenticated && userRole === 'ROLE_FORNECEDOR') {
@@ -85,7 +96,7 @@ export default function Header() {
             );
         }
 
-        // Visitante (Não logado)
+        // Visitante
         return (
             <Link href="/produtos" className={`${baseClass} ${isActive('/produtos') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
                 <Store className="w-5 h-5" />
@@ -99,7 +110,6 @@ export default function Header() {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
 
-                    {/* --- LOGO --- */}
                     <Link href="/" className="flex items-center space-x-3 group">
                         <div className="bg-amber-400 p-2.5 rounded-lg shadow-lg shadow-amber-400/20 group-hover:scale-105 transition-transform duration-300">
                             <svg className="w-6 h-6 text-header-bg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,12 +122,10 @@ export default function Header() {
                         </div>
                     </Link>
 
-                    {/* --- MENU DESKTOP (Central) --- */}
                     <nav className="hidden md:flex items-center space-x-8">
                         {!isLoading && renderNavLinks(false)}
                     </nav>
 
-                    {/* --- ÁREA DO USUÁRIO (Direita) --- */}
                     <div className="hidden md:flex items-center space-x-6">
                         {isLoading ? (
                             <div className="h-8 w-8 bg-white/10 animate-pulse rounded-full"></div>
@@ -125,51 +133,33 @@ export default function Header() {
                             <div className="flex items-center gap-4 pl-6 border-l border-white/10">
                                 <div className="flex flex-col items-end mr-1">
                                     <span className="text-xs text-brand-purple font-bold uppercase tracking-wider">
-                                        {userRole === 'ROLE_FORNECEDOR' ? 'Fornecedor' : 'Cliente'}
+                                        {userRole === 'ROLE_ADMIN' ? 'Administrador' : (userRole === 'ROLE_FORNECEDOR' ? 'Fornecedor' : 'Cliente')}
                                     </span>
                                     <span className="text-sm font-medium text-white">Olá, {userName}</span>
                                 </div>
 
-                                <button
-                                    onClick={handleLogout}
-                                    className="p-2 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-full transition-all"
-                                    title="Sair da conta"
-                                >
+                                <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-full transition-all">
                                     <LogOut className="w-5 h-5" />
                                 </button>
                             </div>
                         ) : (
                             <div className="flex items-center space-x-4">
-                                <Link href="/login" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
-                                    Entrar
-                                </Link>
-                                <Link
-                                    href="/register"
-                                    className="px-5 py-2.5 text-sm font-bold text-white bg-brand-purple rounded-lg hover:bg-purple-700 transition-all shadow-lg shadow-purple-900/20"
-                                >
-                                    Criar Conta
-                                </Link>
+                                <Link href="/login" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Entrar</Link>
+                                <Link href="/register" className="px-5 py-2.5 text-sm font-bold text-white bg-brand-purple rounded-lg hover:bg-purple-700 transition-all shadow-lg shadow-purple-900/20">Criar Conta</Link>
                             </div>
                         )}
                     </div>
 
-                    {/* --- BOTÃO MOBILE --- */}
                     <div className="md:hidden flex items-center">
-                        <button
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="text-gray-300 hover:text-white p-2"
-                        >
+                        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-300 hover:text-white p-2">
                             {isMobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
                         </button>
                     </div>
                 </div>
             </div>
 
-            {/* --- MENU MOBILE (Dropdown) --- */}
             {isMobileMenuOpen && (
-                <div className="md:hidden bg-header-bg border-t border-white/10 px-4 pt-2 pb-6 shadow-2xl absolute w-full left-0 animate-in slide-in-from-top-5 fade-in duration-200">
-
-                    {/* Info do Usuário Mobile */}
+                <div className="md:hidden bg-header-bg border-t border-white/10 px-4 pt-2 pb-6 shadow-2xl absolute w-full left-0">
                     {isAuthenticated && (
                         <div className="flex items-center gap-3 p-4 mb-4 bg-white/5 rounded-lg border border-white/5">
                             <div className="bg-brand-purple/20 p-2 rounded-full">
@@ -181,36 +171,16 @@ export default function Header() {
                             </div>
                         </div>
                     )}
-
-                    <nav className="flex flex-col space-y-2">
-                        {renderNavLinks(true)}
-                    </nav>
-
+                    <nav className="flex flex-col space-y-2">{renderNavLinks(true)}</nav>
                     <div className="mt-6 pt-6 border-t border-white/10">
                         {isAuthenticated ? (
-                            <button
-                                onClick={handleLogout}
-                                className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-red-400 bg-red-400/10 hover:bg-red-400/20 rounded-lg transition-colors font-medium"
-                            >
-                                <LogOut className="w-5 h-5" />
-                                <span>Sair da Conta</span>
+                            <button onClick={handleLogout} className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-red-400 bg-red-400/10 hover:bg-red-400/20 rounded-lg transition-colors font-medium">
+                                <LogOut className="w-5 h-5" /> <span>Sair da Conta</span>
                             </button>
                         ) : (
                             <div className="grid grid-cols-2 gap-3">
-                                <Link
-                                    href="/login"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="flex items-center justify-center px-4 py-3 text-gray-200 bg-white/5 hover:bg-white/10 rounded-lg font-medium"
-                                >
-                                    Entrar
-                                </Link>
-                                <Link
-                                    href="/register"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="flex items-center justify-center px-4 py-3 text-white bg-brand-purple hover:bg-purple-700 rounded-lg font-medium"
-                                >
-                                    Cadastrar
-                                </Link>
+                                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-center px-4 py-3 text-gray-200 bg-white/5 hover:bg-white/10 rounded-lg font-medium">Entrar</Link>
+                                <Link href="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-center px-4 py-3 text-white bg-brand-purple hover:bg-purple-700 rounded-lg font-medium">Cadastrar</Link>
                             </div>
                         )}
                     </div>
