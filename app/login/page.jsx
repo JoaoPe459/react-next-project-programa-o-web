@@ -51,7 +51,7 @@ export default function LoginPage() {
 
         if (role === "ROLE_ADMIN") {
             toast.success("Bem-vindo administrador!");
-            router.push("/admin/dashboard");
+            router.push("/admin");
         } else if (role === "ROLE_FORNECEDOR") {
             toast.success("Bem-vindo fornecedor!");
             router.push("/fornecedor");
