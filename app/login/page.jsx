@@ -1,5 +1,6 @@
 'use client'
 
+import { getSession } from "next-auth/react"
 import { useForm } from "react-hook-form"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
@@ -27,11 +28,42 @@ export default function LoginPage() {
             return;
         }
 
+        const session = await getSession();
 
-        toast.success("Login realizado com sucesso!");
-        router.push("/");
+        if (!session || !session.user) {
+            toast.error("Erro ao carregar sessão");
+            return;
+        }
+
+        console.log("Sessão carregada:", session);
+
+        const { token, role, id, email } = session.user;
+
+        console.log("Token:", token);
+        console.log("Role:", role);
+        console.log("ID:", id);
+        console.log("Email:", email);
+
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("authRole", role);
+        localStorage.setItem("authId", id);
+        localStorage.setItem("authEmail", email);
+
+        if (role === "ROLE_ADMIN") {
+            toast.success("Bem-vindo administrador!");
+            router.push("/admin/dashboard");
+        } else if (role === "ROLE_FORNECEDOR") {
+            toast.success("Bem-vindo fornecedor!");
+            router.push("/fornecedor");
+        } else if (role === "ROLE_USUARIO") {
+            toast.success("Bem-vindo usuário!");
+            router.push("/usuario/produtos");
+        } else {
+            toast("Role desconhecida");
+        }
+
         router.refresh();
-    }
+}
 
     return (
         <div className="flex justify-center items-center min-h-[calc(100vh-5rem)] bg-page-bg font-sans py-12 px-4">
