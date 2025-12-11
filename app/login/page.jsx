@@ -1,7 +1,7 @@
 'use client'
 
 import { useForm } from "react-hook-form"
-import { signIn } from "next-auth/react"
+import { signIn , getSession,useSession} from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import Link from "next/link"
@@ -38,14 +38,43 @@ export default function LoginPage() {
 
     if (result?.error) {
       toast.error("Usuário ou senha incorretos")
-    } else {
+    } 
 
-// Login bem-sucedido Adicionar depois para tratar/redirecionar cada tipo de usuario 
+    const session = await getSession();
 
-      toast.success("Login realizado!")
-      router.push("/produtos")
-      router.refresh()
-    }
+if (!session || !session.user) {
+    toast.error("Erro ao carregar sessão");
+    return;
+  }
+
+  console.log("Sessão carregada:", session);
+
+  const { token, role, id, email } = session.user;
+  console.log("Token:", token);
+  console.log("Role:", role);
+  console.log("ID:", id);
+  console.log("Email:", email);
+
+  localStorage.setItem("authToken", token);
+  localStorage.setItem("authRole", role);
+  localStorage.setItem("authId", id);
+  localStorage.setItem("authEmail", email);
+
+     if (role === "ROLE_ADMIN") {
+    toast.success("Bem-vindo administrador!");
+    router.push("/admin/dashboard");
+  } else if (role === "ROLE_FORNECEDOR") {
+    toast.success("Bem-vindo fornecedor!");
+    router.push("/fornecedor/produtosFornecidos");
+  } else if (role === "ROLE_USUARIO") {
+    toast.success("Bem-vindo usuário!");
+    router.push("/usuario/produtos");
+  } else {
+    toast("Role desconhecida");
+  }
+
+  router.refresh();
+    
   }
 
   return (

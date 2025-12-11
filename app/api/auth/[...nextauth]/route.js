@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { jwtDecode } from "jwt-decode"; // IMPORTANTE
+import { jwtDecode } from "jwt-decode";
 
 const handler = NextAuth({
   providers: [
@@ -27,19 +27,20 @@ const handler = NextAuth({
 
           if (!res.ok) return null;
 
-          const data = await res.json(); // { token: "..." }
+          const data = await res.json();
 
           if (!data.token) return null;
 
-          // Decode do token JWT para extrair dados do usuário
+          // Decode JWT
           const decoded = jwtDecode(data.token);
 
+          console.log("Decoded JWT:", decoded);
 
           return {
             id: decoded.sub,
             email: decoded.email,
             role: decoded.role,
-            token: data.token
+            token: data.token,
           };
 
         } catch (err) {
@@ -55,23 +56,29 @@ const handler = NextAuth({
   },
 
   callbacks: {
+    /**
+     * Salva os dados do usuário dentro do token JWT do NextAuth
+     */
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.role = user.role;
-        token.accessToken = user.token; // JWT do backend
+        token.token = user.token; // nome correto
       }
       return token;
     },
 
+    /**
+     * Envia o token do NextAuth para o client
+     */
     async session({ session, token }) {
       session.user.id = token.id;
       session.user.email = token.email;
       session.user.role = token.role;
 
-      // Token JWT disponível no client
-      session.accessToken = token.accessToken;
+      // CORREÇÃO PRINCIPAL: salvar token dentro de session.user
+      session.user.token = token.token;
 
       return session;
     }
