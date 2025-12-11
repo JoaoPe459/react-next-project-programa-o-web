@@ -39,8 +39,11 @@ export default function LoginPage() {
     if (result?.error) {
       toast.error("Usuário ou senha incorretos")
     } else {
+
+// Login bem-sucedido Adicionar depois para tratar/redirecionar cada tipo de usuario 
+
       toast.success("Login realizado!")
-      router.push("/dashboard")
+      router.push("/produtos")
       router.refresh()
     }
   }
