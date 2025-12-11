@@ -5,6 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from 'react-hot-toast';
 import { UserCog, Save, Trash2, Loader2, AlertTriangle } from 'lucide-react';
+import {API_BASE_URL} from "@/app/utils/api-config";
 
 export default function PerfilPage() {
     const { data: session, status } = useSession();
@@ -26,7 +27,7 @@ export default function PerfilPage() {
         setLoading(true);
 
         try {
-            const res = await fetch('http://localhost:8080/api/users', {
+            const res = await fetch(`${API_BASE_URL}/api/users`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,7 +53,7 @@ export default function PerfilPage() {
         if (!confirm("ATENÇÃO: Isso excluirá sua conta permanentemente. Tem certeza?")) return;
 
         try {
-            const res = await fetch('http://localhost:8080/api/users', {
+            const res = await fetch(`${API_BASE_URL}/api/users`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${session.user.token}` }
             });

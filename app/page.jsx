@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from "next-auth/react";
 import { ShoppingCart, Search, Menu } from 'lucide-react';
+import {API_BASE_URL} from "@/app/utils/api-config";
 
 export default function HomePage() {
     const { data: session, status } = useSession();
@@ -25,7 +26,7 @@ export default function HomePage() {
                 }
 
                 // Tenta buscar do backend enviando o token
-                const res = await fetch('http://localhost:8080/api/produtos', {
+                const res = await fetch(`${API_BASE_URL}/api/produtos`, {
                     method: 'GET',
                     headers: headers
                 });

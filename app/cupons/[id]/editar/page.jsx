@@ -6,6 +6,7 @@ import { useRouter, useParams } from "next/navigation";
 import toast, { Toaster } from 'react-hot-toast';
 import { Loader2, Save, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import {API_BASE_URL} from "@/app/utils/api-config";
 
 export default function EditarCupom() {
     const { data: session, status } = useSession();
@@ -59,7 +60,7 @@ export default function EditarCupom() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`http://localhost:8080/api/cupons/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/cupons/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

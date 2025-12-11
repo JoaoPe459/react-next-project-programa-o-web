@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
+import {API_BASE_URL} from "@/app/utils/api-config";
 
 const handler = NextAuth({
   providers: [
@@ -14,7 +15,7 @@ const handler = NextAuth({
 
       async authorize(credentials) {
         try {
-          const res = await fetch("http://localhost:8080/api/auth/login", {
+          const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"

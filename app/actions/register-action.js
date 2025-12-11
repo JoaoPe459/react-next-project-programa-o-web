@@ -1,5 +1,7 @@
 'use server'
 
+import {API_BASE_URL} from "@/app/utils/api-config";
+
 export async function registerAction(data) {
   // Define o endpoint baseado na escolha do usuário
   // Se for fornecedor -> /fornecedor, caso contrário -> /usuario
@@ -7,7 +9,7 @@ export async function registerAction(data) {
    ? '/fornecedor' 
     : '/usuario';
 
-  const apiUrl = `http://localhost:8080/api/users${endpoint}`;
+  const apiUrl = `${API_BASE_URL}/api/users${endpoint}`;
 
   try {
     const response = await fetch(apiUrl, {

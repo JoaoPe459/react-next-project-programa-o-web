@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import { ArrowLeft, Save, Loader2, PackagePlus } from 'lucide-react';
+import {API_BASE_URL} from "@/app/utils/api-config";
 
 export default function NovoProdutoPage() {
     const { data: session, status } = useSession();
@@ -47,7 +48,7 @@ export default function NovoProdutoPage() {
                 imagem: data.imagem || "https://placehold.co/300x300?text=Sem+Imagem"
             };
 
-            const response = await fetch('http://localhost:8080/api/produtos', {
+            const response = await fetch(`${API_BASE_URL}/api/produtos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

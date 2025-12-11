@@ -7,6 +7,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import { ArrowLeft, Save, Loader2, Package } from 'lucide-react';
+import {API_BASE_URL} from "@/app/utils/api-config";
 
 export default function EditarProdutoPage() {
     const { data: session, status } = useSession();
@@ -30,7 +31,7 @@ export default function EditarProdutoPage() {
         // Buscar dados do produto para preencher o form
         async function fetchProduto() {
             try {
-                const res = await fetch(`http://localhost:8080/api/produtos/${id}`, {
+                const res = await fetch(`${API_BASE_URL}/api/produtos/${id}`, {
                     headers: { 'Authorization': `Bearer ${session.user.token}` }
                 });
                 if (res.ok) {
@@ -68,7 +69,7 @@ export default function EditarProdutoPage() {
                 estoque: parseInt(data.estoque, 10),
             };
 
-            const response = await fetch(`http://localhost:8080/api/produtos/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/produtos/${id}`, {
                 method: 'PUT', // Supondo que a API usa PUT para atualização
                 headers: {
                     'Content-Type': 'application/json',

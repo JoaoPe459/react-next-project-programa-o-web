@@ -5,6 +5,7 @@ import Link from 'next/link'; // Importante para o botão "Ir para a loja"
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Loader2, Search, ShoppingBag, Filter, Calendar, DollarSign, User, ArrowRight } from 'lucide-react';
+import {API_BASE_URL} from "@/app/utils/api-config";
 
 export default function PedidosPage() {
     const { data: session, status } = useSession();
@@ -28,7 +29,7 @@ export default function PedidosPage() {
 
     const fetchPedidos = async () => {
         try {
-            const res = await fetch('http://localhost:8080/api/pedidos', {
+            const res = await fetch(`${API_BASE_URL}/api/pedidos`, {
                 headers: { 'Authorization': `Bearer ${session.user.token}` }
             });
 

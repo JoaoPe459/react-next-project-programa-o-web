@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Loader2, Trash2, Edit, Package, Search, ShoppingCart } from 'lucide-react';
+import {API_BASE_URL} from "@/app/utils/api-config";
 
 export default function ProdutosPage() {
     const { data: session, status } = useSession();
@@ -33,7 +34,7 @@ export default function ProdutosPage() {
                 headers['Authorization'] = `Bearer ${session.user.token}`;
             }
 
-            const res = await fetch('http://localhost:8080/api/produtos', {
+            const res = await fetch(`${API_BASE_URL}/api/produtos`, {
                 headers: headers
             });
 
@@ -58,7 +59,7 @@ export default function ProdutosPage() {
 
         if (confirm('Tem certeza que deseja excluir este produto?')) {
             try {
-                const res = await fetch(`http://localhost:8080/api/produtos/${id}`, {
+                const res = await fetch(`${API_BASE_URL}/api/produtos/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${session.user.token}`

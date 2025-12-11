@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from 'react-hot-toast';
 import { Loader2, Ticket, Save, ArrowLeft } from 'lucide-react';
+import {API_BASE_URL} from "@/app/utils/api-config";
 
 export default function CadastroCupom() {
     const { data: session, status } = useSession();
@@ -39,7 +40,7 @@ export default function CadastroCupom() {
         }
 
         try {
-            const res = await fetch('http://localhost:8080/api/cupons', {
+            const res = await fetch(`${API_BASE_URL}/api/cupons`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

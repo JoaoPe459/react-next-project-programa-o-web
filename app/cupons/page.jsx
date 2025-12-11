@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from 'react-hot-toast';
 import { Loader2, Ticket, Plus, Trash2, Edit, CalendarOff } from 'lucide-react';
+import {API_BASE_URL} from "@/app/utils/api-config";
 
 export default function CuponsPage() {
     const { data: session, status } = useSession();
@@ -26,7 +27,7 @@ export default function CuponsPage() {
 
     const fetchCupons = async () => {
         try {
-            const res = await fetch('http://localhost:8080/api/cupons', {
+            const res = await fetch(`${API_BASE_URL}/api/cupons`, {
                 headers: { 'Authorization': `Bearer ${session.user.token}` }
             });
             if (res.ok) {
@@ -45,7 +46,7 @@ export default function CuponsPage() {
         if (!confirm("Tem certeza que deseja excluir este cupom?")) return;
 
         try {
-            const res = await fetch(`http://localhost:8080/api/cupons/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/cupons/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${session.user.token}` }
             });

@@ -1,5 +1,7 @@
 'use server'
 
+import {API_BASE_URL} from "@/app/utils/api-config";
+
 export async function registerUserAction(data) {
   // 1. Validação Manual no Servidor (Substituindo o Zod)
   const errors = {};
@@ -25,7 +27,7 @@ export async function registerUserAction(data) {
 
   // 2. Envio para a API Java
   try {
-    const response = await fetch('http://localhost:8080/api/users/usuario', {
+    const response = await fetch(`${API_BASE_URL}/api/users/usuario`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
