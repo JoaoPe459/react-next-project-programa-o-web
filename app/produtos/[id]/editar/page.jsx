@@ -37,11 +37,13 @@ export default function EditarProdutoPage() {
                     const data = await res.json();
                     // Preencher campos
                     setValue("nome", data.nome);
-                    setValue("categoria", data.categoria);
-                    setValue("preco", data.preco || data.precoNovo);
-                    setValue("estoque", data.estoque);
-                    setValue("imagem", data.imagem);
                     setValue("descricao", data.descricao);
+                    setValue("preco", data.preco);
+// estes não existem no backend → defina defaults
+                    setValue("categoria", data.categoria ?? "");
+                    setValue("estoque", data.estoque ?? 0);
+                    setValue("imagem", data.imagem ?? "");
+
                 } else {
                     toast.error("Erro ao carregar produto.");
                     router.push("/produtos");
