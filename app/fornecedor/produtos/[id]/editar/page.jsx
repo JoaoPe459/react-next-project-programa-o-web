@@ -20,13 +20,13 @@ export default function EditarProdutoPage() {
 
     const { register, handleSubmit, setValue, formState: { errors } } = useForm();
 
+    // --- PROTEÇÃO DE ROTA ---
     useEffect(() => {
         if (status === "loading") return;
         if (status === "unauthenticated" || session?.user?.role !== "ROLE_FORNECEDOR") {
-            toast.error("Acesso não autorizado.");
-            router.push("/produtos");
-            return;
+            router.push("/"); // Manda para home se não for fornecedor
         }
+    }, [status, session, router]);
 
         // Buscar dados do produto para preencher o form
         async function fetchProduto() {
@@ -47,7 +47,7 @@ export default function EditarProdutoPage() {
 
                 } else {
                     toast.error("Erro ao carregar produto.");
-                    router.push("/produtos");
+                    router.push("/fornecedor/produtos");
                 }
             } catch (err) {
                 console.error(err);
@@ -57,8 +57,6 @@ export default function EditarProdutoPage() {
             }
         }
 
-        if (id) fetchProduto();
-    }, [id, session, status, router, setValue]);
 
     const onSubmit = async (data) => {
         setIsSubmitting(true);
@@ -70,7 +68,7 @@ export default function EditarProdutoPage() {
             };
 
             const response = await fetch(`${API_BASE_URL}/api/produtos/${id}`, {
-                method: 'PUT', // Supondo que a API usa PUT para atualização
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session.user.token}`
@@ -80,7 +78,7 @@ export default function EditarProdutoPage() {
 
             if (response.ok) {
                 toast.success('Produto atualizado!');
-                setTimeout(() => router.push('/produtos'), 1500);
+                setTimeout(() => router.push('/fornecedor/produtos'), 1500);
             } else {
                 toast.error('Erro ao atualizar produto.');
             }

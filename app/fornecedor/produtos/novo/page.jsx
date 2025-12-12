@@ -18,18 +18,10 @@ export default function NovoProdutoPage() {
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     // 1. Verificação de Segurança e Redirecionamento
+    // --- PROTEÇÃO DE ROTA ---
     useEffect(() => {
         if (status === "loading") return;
-
-        if (status === "unauthenticated") {
-            toast.error("Você precisa estar logado.");
-            router.push("/login");
-            return;
-        }
-
-        // Verifica se é Fornecedor
-        if (session?.user?.role !== "ROLE_FORNECEDOR") {
-            toast.error("Acesso não autorizado. Apenas fornecedores podem cadastrar produtos.");
+        if (status === "unauthenticated" || session?.user?.role !== "ROLE_FORNECEDOR") {
             router.push("/");
         }
     }, [status, session, router]);
@@ -60,7 +52,7 @@ export default function NovoProdutoPage() {
             if (response.ok) {
                 toast.success('Produto cadastrado com sucesso!');
                 setTimeout(() => {
-                    router.push('/produtos');
+                    router.push('/fornecedor/produtos');
                 }, 1500);
             } else {
                 const errorData = await response.text();
@@ -108,7 +100,7 @@ export default function NovoProdutoPage() {
                     </div>
 
                     <Link
-                        href="/produtos"
+                        href="/usuario/produtos"
                         className="flex items-center text-gray-600 hover:text-brand-purple transition-colors text-sm font-medium bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm hover:shadow"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2" />
