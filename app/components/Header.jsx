@@ -64,11 +64,11 @@ export default function Header() {
                         <LayoutDashboard className="w-5 h-5" />
                         <span>Painel</span>
                     </Link>
-                    <Link href="/usuario/produtos" className={`${baseClass} ${isActive('/produtos') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
+                    <Link href="/fornecedor/produtos" className={`${baseClass} ${isActive('/produtos') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
                         <Store className="w-5 h-5" />
                         <span>Meus Produtos</span>
                     </Link>
-                    <Link href="/usuario/produtos/novo" className={`${baseClass} text-green-400 hover:text-green-300`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
+                    <Link href="/fornecedor/produtos/novo" className={`${baseClass} text-green-400 hover:text-green-300`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
                         <PlusCircle className="w-5 h-5" />
                         <span>Novo Produto</span>
                     </Link>
