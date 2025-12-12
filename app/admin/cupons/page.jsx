@@ -20,6 +20,7 @@ export default function CuponsPage() {
         if (status === "unauthenticated" || session?.user?.role !== "ROLE_ADMIN") {
             router.push("/"); // Manda para home se não for admin
         }
+        fetchCupons()
     }, [status, session, router]);
 
     const fetchCupons = async () => {
