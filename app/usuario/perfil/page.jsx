@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from 'react-hot-toast';
@@ -12,6 +12,14 @@ export default function PerfilPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
+    // --- PROTEÇÃO DE ROTA ---
+    useEffect(() => {
+        if (status === "loading") return;
+        if (status === "unauthenticated" || session?.user?.role !== "ROLE_USUARIO") {
+            router.push("/"); // Manda para home se não for usuario
+        }
+    }, [status, session, router]);
+
     // Dados para atualização
     const [formData, setFormData] = useState({
         nome: session?.user?.nome || '',
@@ -19,8 +27,6 @@ export default function PerfilPage() {
         senha: ''
     });
 
-    if (status === "loading") return <div className="p-10 flex justify-center"><Loader2 className="animate-spin text-brand-purple"/></div>;
-    if (status === "unauthenticated") { router.push("/login"); return null; }
 
     const handleUpdate = async (e) => {
         e.preventDefault();
