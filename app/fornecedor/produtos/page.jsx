@@ -21,6 +21,7 @@ export default function ProdutosPageFornecedor() {
         if (status === "unauthenticated" || session?.user?.role !== "ROLE_FORNECEDOR") {
             router.push("/"); // Manda para home se não for fornecedor
         }
+        fetchProdutos();
     }, [status, session, router]);
 
     const fetchProdutos = async () => {

@@ -26,6 +26,7 @@ export default function EditarProdutoPage() {
         if (status === "unauthenticated" || session?.user?.role !== "ROLE_FORNECEDOR") {
             router.push("/"); // Manda para home se não for fornecedor
         }
+        fetchProduto();
     }, [status, session, router]);
 
         // Buscar dados do produto para preencher o form

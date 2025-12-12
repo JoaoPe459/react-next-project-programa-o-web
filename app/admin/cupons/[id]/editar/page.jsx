@@ -26,6 +26,7 @@ export default function EditarCupom() {
         if (status === "unauthenticated" || session?.user?.role !== "ROLE_ADMIN") {
             router.push("/");
         }
+        fetchCupom();
     }, [status, session, router]);
 
     const fetchCupom = async () => {
