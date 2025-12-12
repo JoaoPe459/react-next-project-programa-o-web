@@ -47,7 +47,7 @@ export default function Header() {
         if (isAuthenticated && userRole === 'ROLE_ADMIN') {
             return (
                 <>
-                    <Link href="/cupons" className={`${baseClass} ${isActive('/cupons') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
+                    <Link href="/admin/cupons" className={`${baseClass} ${isActive('/cupons') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
                         <Ticket className="w-5 h-5" />
                         <span>Gerenciar Cupons</span>
                     </Link>
@@ -64,11 +64,11 @@ export default function Header() {
                         <LayoutDashboard className="w-5 h-5" />
                         <span>Painel</span>
                     </Link>
-                    <Link href="/produtos" className={`${baseClass} ${isActive('/produtos') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
+                    <Link href="/usuario/produtos" className={`${baseClass} ${isActive('/produtos') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
                         <Store className="w-5 h-5" />
                         <span>Meus Produtos</span>
                     </Link>
-                    <Link href="/produtos/novo" className={`${baseClass} text-green-400 hover:text-green-300`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
+                    <Link href="/usuario/produtos/novo" className={`${baseClass} text-green-400 hover:text-green-300`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
                         <PlusCircle className="w-5 h-5" />
                         <span>Novo Produto</span>
                     </Link>
@@ -80,15 +80,15 @@ export default function Header() {
         if (isAuthenticated && userRole === 'ROLE_USUARIO') {
             return (
                 <>
-                    <Link href="/produtos" className={`${baseClass} ${isActive('/produtos') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
+                    <Link href="/usuario/produtos" className={`${baseClass} ${isActive('/produtos') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
                         <Store className="w-5 h-5" />
                         <span>Loja</span>
                     </Link>
-                    <Link href="/pedidos" className={`${baseClass} ${isActive('/pedidos') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
+                    <Link href="/usuario/pedidos" className={`${baseClass} ${isActive('/pedidos') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
                         <Package className="w-5 h-5" />
                         <span>Meus Pedidos</span>
                     </Link>
-                    <Link href="/carrinho" className={`${baseClass} ${isActive('/carrinho') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
+                    <Link href="/usuario/carrinho" className={`${baseClass} ${isActive('/carrinho') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
                         <ShoppingCart className="w-5 h-5" />
                         <span>Carrinho</span>
                     </Link>
@@ -98,7 +98,7 @@ export default function Header() {
 
         // Visitante
         return (
-            <Link href="/produtos" className={`${baseClass} ${isActive('/produtos') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
+            <Link href="/usuario/produtos" className={`${baseClass} ${isActive('/produtos') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
                 <Store className="w-5 h-5" />
                 <span>Explorar Loja</span>
             </Link>
