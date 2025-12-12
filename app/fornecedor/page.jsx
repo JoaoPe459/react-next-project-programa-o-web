@@ -11,20 +11,11 @@ export default function FornecedorDashboard() {
     const router = useRouter();
     const [stats, setStats] = useState({ produtos: 0, pedidos: 0 });
 
+    // --- PROTEÇÃO DE ROTA ---
     useEffect(() => {
-        if (status === "unauthenticated") {
-            router.push("/login");
-            return;
-        }
-
-        // Verifica se é fornecedor
-        if (status === "authenticated") {
-            if (session?.user?.role !== "ROLE_FORNECEDOR") {
-                router.push("/"); // Expulsa se não for fornecedor
-            } else {
-                // Simulação de busca de estatísticas (Substitua por fetch real quando tiver o endpoint)
-                setStats({ produtos: 12, pedidos: 5 });
-            }
+        if (status === "loading") return;
+        if (status === "unauthenticated" || session?.user?.role !== "ROLE_FORNECEDOR") {
+            router.push("/"); // Manda para home se não for fornecedor
         }
     }, [status, session, router]);
 
@@ -108,7 +99,7 @@ export default function FornecedorDashboard() {
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <Link href="/produtos/novo" className="group bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col items-center justify-center gap-3 text-center cursor-pointer">
+                    <Link href="/fornecedor/produtos/novo" className="group bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col items-center justify-center gap-3 text-center cursor-pointer">
                         <div className="bg-purple-100 p-4 rounded-full group-hover:bg-brand-purple group-hover:text-white transition-colors duration-300">
                             <PlusCircle className="w-8 h-8 text-brand-purple group-hover:text-white" />
                         </div>
@@ -116,7 +107,7 @@ export default function FornecedorDashboard() {
                         <span className="text-xs text-gray-400">Adicione itens ao seu catálogo</span>
                     </Link>
 
-                    <Link href="/produtos" className="group bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col items-center justify-center gap-3 text-center cursor-pointer">
+                    <Link href="/fornecedor/produtos" className="group bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col items-center justify-center gap-3 text-center cursor-pointer">
                         <div className="bg-blue-100 p-4 rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
                             <Package className="w-8 h-8 text-blue-600 group-hover:text-white" />
                         </div>
@@ -124,7 +115,7 @@ export default function FornecedorDashboard() {
                         <span className="text-xs text-gray-400">Edite ou remova seus produtos</span>
                     </Link>
 
-                    <Link href="/pedidos" className="group bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col items-center justify-center gap-3 text-center cursor-pointer">
+                    <Link href="/fornecedor/pedidos" className="group bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col items-center justify-center gap-3 text-center cursor-pointer">
                         <div className="bg-yellow-100 p-4 rounded-full group-hover:bg-yellow-500 group-hover:text-white transition-colors duration-300">
                             <ShoppingCart className="w-8 h-8 text-yellow-600 group-hover:text-white" />
                         </div>
