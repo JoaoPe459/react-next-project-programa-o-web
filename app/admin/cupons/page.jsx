@@ -14,16 +14,13 @@ export default function CuponsPage() {
     const [cupons, setCupons] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // --- PROTEÇÃO DE ROTA ---
     useEffect(() => {
         if (status === "loading") return;
-
-        // --- ALTERADO: Verificação agora é para ROLE_ADMIN ---
         if (status === "unauthenticated" || session?.user?.role !== "ROLE_ADMIN") {
             router.push("/"); // Manda para home se não for admin
-            return;
         }
-        fetchCupons();
-    }, [status, session]);
+    }, [status, session, router]);
 
     const fetchCupons = async () => {
         try {
@@ -82,7 +79,7 @@ export default function CuponsPage() {
                         <Ticket className="w-8 h-8 text-brand-purple" />
                         Gerenciar Cupons
                     </h1>
-                    <Link href="/cupons/novo" className="flex items-center gap-2 bg-brand-purple text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition">
+                    <Link href="/admin/cupons/novo" className="flex items-center gap-2 bg-brand-purple text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition">
                         <Plus className="w-5 h-5" />
                         Novo Cupom
                     </Link>
@@ -120,7 +117,7 @@ export default function CuponsPage() {
                                             {cupom.dataValidade || "Sem validade"}
                                         </td>
                                         <td className="px-6 py-4 flex justify-center gap-3">
-                                            <Link href={`/cupons/${cupom.id}/editar`} className="text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-blue-50">
+                                            <Link href={`/admin/cupons/${cupom.id}/editar`} className="text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-blue-50">
                                                 <Edit className="w-5 h-5" />
                                             </Link>
                                             <button

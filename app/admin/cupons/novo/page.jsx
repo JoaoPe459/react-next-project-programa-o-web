@@ -24,7 +24,7 @@ export default function CadastroCupom() {
     useEffect(() => {
         if (status === "loading") return;
         if (status === "unauthenticated" || session?.user?.role !== "ROLE_ADMIN") {
-            router.push("/");
+            router.push("/"); // Manda para home se não for admin
         }
     }, [status, session, router]);
 
@@ -51,9 +51,10 @@ export default function CadastroCupom() {
 
             if (res.ok) {
                 toast.success("Cupom criado com sucesso!");
-                setTimeout(() => router.push('/cupons'), 1500);
+                setTimeout(() => router.push('/admin/cupons'), 1500);
             } else {
-                toast.error("Erro ao criar cupom. Verifique os dados.");
+                const erro = await res.json();
+                toast.error(JSON.stringify(erro));
             }
         } catch (error) {
             toast.error("Erro de conexão.");
@@ -76,7 +77,7 @@ export default function CadastroCupom() {
                         <Ticket className="w-6 h-6 text-brand-purple" />
                         Criar Novo Cupom
                     </h2>
-                    <Link href="/cupons" className="text-gray-500 hover:text-brand-purple flex items-center gap-1">
+                    <Link href="/admin/cupons" className="text-gray-500 hover:text-brand-purple flex items-center gap-1">
                         <ArrowLeft className="w-5 h-5"/> Voltar
                     </Link>
                 </div>

@@ -22,17 +22,15 @@ export default function EditarCupom() {
     });
 
     useEffect(() => {
-        if (status === "authenticated" && session?.user?.role === "ROLE_ADMIN") {
-            fetchCupom();
-        } else if (status === "unauthenticated") {
-            router.push("/login");
+        if (status === "loading") return;
+        if (status === "unauthenticated" || session?.user?.role !== "ROLE_ADMIN") {
+            router.push("/");
         }
-    }, [status, id]);
+    }, [status, session, router]);
 
     const fetchCupom = async () => {
         try {
-            // Nota: Postman sugere buscar em /api/cupons
-            const res = await fetch(`http://localhost:8080/api/cupons`, {
+            const res = await fetch(`${API_BASE_URL}/api/cupons`, {
                 headers: { 'Authorization': `Bearer ${session.user.token}` }
             });
             if (res.ok) {
@@ -46,8 +44,9 @@ export default function EditarCupom() {
                         dataValidade: cupom.dataValidade || ''
                     });
                 } else {
-                    toast.error("Cupom não encontrado.");
-                    router.push("/cupons");
+                    const erro = await res.json();
+                    toast.error(JSON.stringify(erro));
+                    router.push("/admin/cupons");
                 }
             }
         } catch (error) {
@@ -71,7 +70,7 @@ export default function EditarCupom() {
 
             if (res.ok) {
                 toast.success("Cupom atualizado!");
-                setTimeout(() => router.push("/cupons"), 1500);
+                setTimeout(() => router.push("/admin/cupons"), 1500);
             } else {
                 toast.error("Erro ao atualizar.");
             }
@@ -88,7 +87,7 @@ export default function EditarCupom() {
             <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-gray-800">Editar Cupom</h2>
-                    <Link href="/cupons" className="text-gray-500 hover:text-brand-purple"><ArrowLeft className="w-6 h-6"/></Link>
+                    <Link href="/admin/cupons" className="text-gray-500 hover:text-brand-purple"><ArrowLeft className="w-6 h-6"/></Link>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
