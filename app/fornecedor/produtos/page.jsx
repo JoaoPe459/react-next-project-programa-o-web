@@ -26,7 +26,7 @@ export default function ProdutosPageFornecedor() {
 
     const fetchProdutos = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/produtos`, {
+            const res = await fetch(`${API_BASE_URL}/api/produtos/produtos-vendedor`, {
                 headers: { 'Authorization': `Bearer ${session?.user?.token}` }
             });
             if (res.ok) setProdutos(await res.json());

@@ -34,7 +34,7 @@ export default function PedidosPageFornecedor() {
 
     const fetchPedidos = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/pedidos`, {
+            const res = await fetch(`${API_BASE_URL}/api/pedidos/vendas`, {
                 headers: { 'Authorization': `Bearer ${session.user.token}` }
             });
 
