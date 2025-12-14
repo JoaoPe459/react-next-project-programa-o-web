@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from 'lucide-react';
 import { API_BASE_URL } from "@/app/utils/api-config";
 import ProductList from "@/app/components/ProductList";
+import {useCart} from "@/app/context/CartContext";
 
 export default function ProdutosPageUsuario() {
     const { data: session, status } = useSession();
@@ -13,6 +14,7 @@ export default function ProdutosPageUsuario() {
     const [produtos, setProdutos] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
+    const { addToCart } = useCart();
 
     // --- PROTEÇÃO DE ROTA ---
     useEffect(() => {
@@ -41,9 +43,9 @@ export default function ProdutosPageUsuario() {
         }
     };
 
-    const addToCart = () => {
-        if (status === "unauthenticated") router.push("/login");
-        else alert("Adicionado ao carrinho! (Simulação)");
+    const handleAddToCart = (produto) => {
+        addToCart(produto);
+        alert(`${produto.nome} adicionado ao carrinho!`);
     };
 
     if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
@@ -54,7 +56,7 @@ export default function ProdutosPageUsuario() {
                 produtos={produtos}
                 loading={loading}
                 isFornecedor={false}
-                onAddToCart={addToCart}
+                onAddToCart={handleAddToCart} // Passa a nova função
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
             />

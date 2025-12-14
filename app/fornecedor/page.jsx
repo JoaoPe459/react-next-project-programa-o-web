@@ -5,19 +5,59 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Package, ShoppingCart, PlusCircle, TrendingUp, Loader2, LayoutDashboard } from 'lucide-react';
+import {API_BASE_URL} from "@/app/utils/api-config";
 
 export default function FornecedorDashboard() {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const [stats, setStats] = useState({ produtos: 0, pedidos: 0 });
 
-    // --- PROTEÇÃO DE ROTA ---
+    const [stats, setStats] = useState({
+        totalProdutos: 0,
+        totalVendas: 0,
+        faturamentoTotal: 0.0
+    });
+
+    const formatCurrency = (val) => {
+        return new Intl.NumberFormat('pt-AO', {
+            style: 'currency',
+            currency: 'AOA'
+        }).format(val || 0);
+    };
+
+    // --- 1. PROTEÇÃO DE ROTA ---
     useEffect(() => {
         if (status === "loading") return;
         if (status === "unauthenticated" || session?.user?.role !== "ROLE_FORNECEDOR") {
             router.push("/"); // Manda para home se não for fornecedor
         }
     }, [status, session, router]);
+
+    // --- 2. BUSCA DE DADOS (ENDPOINT ÚNICO) ---
+    useEffect(() => {
+        if (status === "authenticated" && session?.user?.token) {
+            const fetchDashboard = async () => {
+                try {
+                    const res = await fetch(`${API_BASE_URL}/api/dashboard/resumo`, {
+                        headers: {
+                            'Authorization': `Bearer ${session.user.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        setStats(data);
+                    } else {
+                        console.error("Erro ao buscar resumo do dashboard:", res.status);
+                    }
+                } catch (error) {
+                    console.error("Erro de conexão com o backend:", error);
+                }
+            };
+
+            fetchDashboard();
+        }
+    }, [status, session]);
 
     if (status === "loading") {
         return (
@@ -32,12 +72,9 @@ export default function FornecedorDashboard() {
 
     return (
         <div className="min-h-screen bg-page-bg font-sans">
-
-            {/* Header removido (está no layout.js) */}
-
             <main className="container mx-auto px-4 py-8">
 
-                {/* Cabeçalho da Página (Substituto do Header antigo) */}
+                {/* Cabeçalho */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
@@ -61,7 +98,9 @@ export default function FornecedorDashboard() {
                         <div className="absolute top-0 right-0 w-2 h-full bg-brand-purple"></div>
                         <div>
                             <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Meus Produtos</p>
-                            <p className="text-4xl font-bold text-gray-800 mt-2">{stats.produtos}</p>
+                            <p className="text-4xl font-bold text-gray-800 mt-2">
+                                {stats.totalProdutos}
+                            </p>
                         </div>
                         <div className="bg-purple-50 p-3 rounded-full group-hover:bg-purple-100 transition-colors">
                             <Package className="w-8 h-8 text-brand-purple" />
@@ -72,20 +111,24 @@ export default function FornecedorDashboard() {
                     <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 flex items-center justify-between relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-2 h-full bg-yellow-400"></div>
                         <div>
-                            <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Pedidos Recebidos</p>
-                            <p className="text-4xl font-bold text-gray-800 mt-2">{stats.pedidos}</p>
+                            <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Vendas Realizadas</p>
+                            <p className="text-4xl font-bold text-gray-800 mt-2">
+                                {stats.totalVendas}
+                            </p>
                         </div>
                         <div className="bg-yellow-50 p-3 rounded-full group-hover:bg-yellow-100 transition-colors">
                             <ShoppingCart className="w-8 h-8 text-yellow-500" />
                         </div>
                     </div>
 
-                    {/* Card Rendimento (Mock) */}
+                    {/* Card Rendimento / Faturamento */}
                     <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 flex items-center justify-between relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-2 h-full bg-green-500"></div>
                         <div>
-                            <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Vendas (Mês)</p>
-                            <p className="text-4xl font-bold text-gray-800 mt-2">Kz 0,00</p>
+                            <p className="text-gray-500 text-sm font-medium uppercase tracking-wide">Faturamento Total</p>
+                            <p className="text-4xl font-bold text-gray-800 mt-2 text-green-600">
+                                {formatCurrency(stats.faturamentoTotal)}
+                            </p>
                         </div>
                         <div className="bg-green-50 p-3 rounded-full group-hover:bg-green-100 transition-colors">
                             <TrendingUp className="w-8 h-8 text-green-500" />
