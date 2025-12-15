@@ -12,20 +12,18 @@ export default function CarrinhoPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
 
-    // Estados para o Cupom
     const [codigoCupom, setCodigoCupom] = useState("");
-    const [cupomAplicado, setCupomAplicado] = useState(null); // Armazena o objeto do cupom válido
+    const [cupomAplicado, setCupomAplicado] = useState(null);
     const [erroCupom, setErroCupom] = useState("");
     const [loadingCupom, setLoadingCupom] = useState(false);
 
     useEffect(() => {
         if (status === "loading") return;
         if (status === "unauthenticated" || session?.user?.role !== "ROLE_USUARIO") {
-            router.push("/"); // Manda para home se não for usuario
+            router.push("/");
         }
     }, [status, session, router]);
 
-    // Função para verificar e aplicar o cupom
     const verificarCupom = async () => {
         if (!codigoCupom.trim()) return;
 
@@ -34,7 +32,6 @@ export default function CarrinhoPage() {
         setCupomAplicado(null);
 
         try {
-            // Rota ajustada com /api
             const res = await fetch(`${API_BASE_URL}/api/cupons/codigo/${codigoCupom}`, {
                 method: 'GET',
                 headers: {
@@ -45,9 +42,11 @@ export default function CarrinhoPage() {
 
             if (res.ok) {
                 const data = await res.json();
-
+                // Verificação extra: valor do cupom deve ser positivo
                 if (data.ativo === false) {
                     setErroCupom("Este cupom não está mais ativo.");
+                } else if (data.valorDesconto < 0) {
+                    setErroCupom("Cupom inválido (valor negativo).");
                 } else {
                     setCupomAplicado(data);
                 }
@@ -62,34 +61,34 @@ export default function CarrinhoPage() {
         }
     };
 
-    // Função auxiliar para remover o cupom aplicado
     const removerCupom = () => {
         setCupomAplicado(null);
         setCodigoCupom("");
         setErroCupom("");
     };
 
-    // --- CORREÇÃO AQUI ---
-    // Cálculos de Totais baseados no JSON retornado
     const calcularDesconto = () => {
         if (!cupomAplicado) return 0;
 
-        // O JSON retorna "PERCENTAGEM", não "PERCENTUAL"
+        const totalCompra = Number(cartTotal);
+        const valorCupom = Number(cupomAplicado.valorDesconto);
+        let descontoCalculado = 0;
+
         if (cupomAplicado.tipoDesconto === 'PERCENTAGEM') {
-            return (cartTotal * cupomAplicado.valorDesconto) / 100;
+            descontoCalculado = (totalCompra * valorCupom) / 100;
+        } else if (cupomAplicado.tipoDesconto === 'FIXO') {
+            descontoCalculado = valorCupom;
         }
 
-        if (cupomAplicado.tipoDesconto === 'FIXO') {
-            const desconto = cupomAplicado.valorDesconto;
-            // Garante que o desconto não seja maior que o total da compra
-            return desconto > cartTotal ? cartTotal : desconto;
+        if (descontoCalculado > totalCompra) {
+            return totalCompra;
         }
 
-        return 0;
+        return descontoCalculado;
     };
 
     const valorDesconto = calcularDesconto();
-    const totalFinal = cartTotal - valorDesconto;
+    const totalFinal = Math.max(0, cartTotal - valorDesconto);
 
     const finalizarCompra = async () => {
         if (cartItems.length === 0) return;
@@ -184,7 +183,6 @@ export default function CarrinhoPage() {
                 ))}
 
                 <div className="mt-8 flex flex-col md:flex-row gap-8 justify-between items-start">
-                    {/* Coluna Esquerda: Cupom */}
                     <div className="w-full md:w-1/3 space-y-2">
                         <label className="text-sm font-medium text-gray-700">Cupom de Desconto</label>
                         <div className="flex gap-2">
@@ -234,7 +232,6 @@ export default function CarrinhoPage() {
                         )}
                     </div>
 
-                    {/* Coluna Direita: Resumo Financeiro */}
                     <div className="w-full md:w-1/3 bg-gray-50 p-6 rounded-lg border border-gray-100">
                         <div className="space-y-3">
                             <div className="flex justify-between text-gray-600">
@@ -242,7 +239,6 @@ export default function CarrinhoPage() {
                                 <span>{formatCurrency(cartTotal)}</span>
                             </div>
 
-                            {/* --- CORREÇÃO VISUAL AQUI --- */}
                             {cupomAplicado && (
                                 <div className="flex justify-between text-green-600 font-medium">
                                     <span>
@@ -264,7 +260,8 @@ export default function CarrinhoPage() {
 
                         <button
                             onClick={finalizarCompra}
-                            className="w-full mt-6 bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition font-semibold shadow-lg shadow-green-200"
+                            disabled={cartItems.length === 0}
+                            className="w-full mt-6 bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition font-semibold shadow-lg shadow-green-200 disabled:opacity-50"
                         >
                             Finalizar Compra
                         </button>
