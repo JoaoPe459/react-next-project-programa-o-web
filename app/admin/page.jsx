@@ -49,16 +49,16 @@ export default function AdminDashboard() {
                     </div>
                 </Link>
 
-                {/* Card Usuários (Placeholder) */}
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between opacity-70">
+                {/* Card Usuários - ATUALIZADO */}
+                <Link href="/admin/usuarios" className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100 flex items-center justify-between group cursor-pointer">
                     <div>
                         <p className="text-gray-500 text-sm font-medium uppercase">Usuários</p>
                         <p className="text-xl font-bold text-gray-800 mt-1">Gerenciar Contas</p>
                     </div>
-                    <div className="bg-gray-50 p-3 rounded-full">
-                        <Users className="w-8 h-8 text-gray-400" />
+                    <div className="bg-blue-50 p-3 rounded-full group-hover:bg-blue-600 group-hover:text-white transition">
+                        <Users className="w-8 h-8 text-blue-600 group-hover:text-white" />
                     </div>
-                </div>
+                </Link>
 
                 {/* Card Vendas (Placeholder) */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between opacity-70">
