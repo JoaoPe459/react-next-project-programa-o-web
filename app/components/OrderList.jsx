@@ -1,6 +1,6 @@
 'use client';
 
-import { ShoppingBag, Filter, Search, User, Calendar, DollarSign, Package } from 'lucide-react';
+import { ShoppingBag, Filter, Search, User, Calendar, DollarSign, Package, XCircle, Ban } from 'lucide-react';
 
 export default function OrderList({
                                       pedidos,
@@ -11,37 +11,41 @@ export default function OrderList({
                                       setFiltroStatus,
                                       title = "Meus Pedidos",
                                       isFornecedor = false,
-                                      emptyStateAction = null
+                                      emptyStateAction = null,
+                                      onCancel
                                   }) {
     const formatCurrency = (val) => new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(val);
 
     const getStatusColor = (status) => {
-        const s = status?.toString().toLowerCase(); // Garante string
+        const s = status?.toString().toLowerCase();
         if (s === 'pendente' || s === 'processando') return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-        if (s === 'aprovado' || s === 'concluido') return 'bg-blue-100 text-blue-800 border-blue-200'; // Ajuste conforme seu Enum
+        if (s === 'aprovado' || s === 'concluido') return 'bg-blue-100 text-blue-800 border-blue-200';
         if (s === 'enviado') return 'bg-purple-100 text-purple-800 border-purple-200';
         if (s === 'entregue') return 'bg-green-100 text-green-800 border-green-200';
         if (s === 'cancelado') return 'bg-red-100 text-red-800 border-red-200';
         return 'bg-gray-100 text-gray-800 border-gray-200';
     };
 
-    // 1. Função de Normalização: Padroniza os dados independente da origem
+    // Função auxiliar para verificar se pode cancelar
+    const canCancel = (status) => {
+        const s = status?.toString().toUpperCase();
+        return s === 'PENDENTE' || s === 'PROCESSANDO';
+    };
+
     const normalizeData = (p) => {
         if (isFornecedor) {
-            // Estrutura do VendaFornecedorDTO
             return {
-                id: p.pedidoId,
-                mainInfo: p.nomeProduto, // Para fornecedor, o Produto é o destaque
-                subInfo: `Qtd: ${p.quantidade} | Cliente: ${p.clienteNome || 'N/A'}`,
-                data: p.dataVenda,
-                status: p.status, // Precisa vir do backend
-                total: p.subtotal // O fornecedor vê o quanto ELE faturou, não o total do pedido
+                id: p.pedidoId || p.id,
+                mainInfo: p.nomeProduto || "Vários Itens",
+                subInfo: `Qtd: ${p.quantidade || '-'} | Cliente: ${p.clienteNome || 'N/A'}`,
+                data: p.dataVenda || p.dataPedido,
+                status: p.status,
+                total: p.subtotal || p.total
             };
         } else {
-            // Estrutura do PedidoResponseDTO (Cliente/Admin)
             return {
                 id: p.id,
-                mainInfo: p.clienteNome || p.cliente || "Cliente", // Cliente é o destaque
+                mainInfo: p.clienteNome || p.cliente || "WartMart Shop",
                 subInfo: p.itens ? `${p.itens.length} itens` : 'Ver detalhes',
                 data: p.dataPedido || p.data,
                 status: p.status,
@@ -51,14 +55,12 @@ export default function OrderList({
     };
 
     const filtered = pedidos.filter(pRaw => {
-        const p = normalizeData(pRaw); // Normaliza antes de filtrar
-
+        const p = normalizeData(pRaw);
         const term = searchTerm.toLowerCase();
 
-        // Busca inteligente baseada no tipo de usuário
         const matchSearch = p.id?.toString().includes(term) ||
             (p.mainInfo || '').toLowerCase().includes(term) ||
-            (isFornecedor && (p.subInfo || '').toLowerCase().includes(term)); // Fornecedor pode buscar por cliente na subInfo
+            (isFornecedor && (p.subInfo || '').toLowerCase().includes(term));
 
         const matchStatus = filtroStatus === 'todos' || p.status?.toString().toLowerCase() === filtroStatus;
         return matchSearch && matchStatus;
@@ -75,7 +77,7 @@ export default function OrderList({
 
     return (
         <div className="w-full">
-            {/* Cabeçalho e Filtros (Inalterado, apenas textos genéricos) */}
+            {/* Cabeçalho e Filtros */}
             <div className="flex flex-col md:flex-row justify-between mb-8 gap-4">
                 <div className="flex items-center space-x-3">
                     {isFornecedor ? <Package className="w-8 h-8 text-brand-purple" /> : <ShoppingBag className="w-8 h-8 text-brand-purple" />}
@@ -94,7 +96,8 @@ export default function OrderList({
                                 className="block w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-purple appearance-none bg-white cursor-pointer"
                             >
                                 <option value="todos">Todos Status</option>
-                                <option value="processando">Processando</option> {/* Ajustado para seu Enum */}
+                                <option value="pendente">Pendente</option>
+                                <option value="processando">Processando</option>
                                 <option value="concluido">Concluído</option>
                                 <option value="cancelado">Cancelado</option>
                             </select>
@@ -107,7 +110,7 @@ export default function OrderList({
                             <input
                                 type="text"
                                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-purple"
-                                placeholder={isFornecedor ? "Buscar ID, Produto ou Cliente..." : "Buscar ID ou Cliente..."}
+                                placeholder={isFornecedor ? "Buscar ID, Produto ou Cliente..." : "Buscar ID..."}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -142,20 +145,20 @@ export default function OrderList({
                     </div>
                 ) : (
                     <>
-                        {/* Header da Tabela */}
+                        {/* Header da Tabela - Ajustado o Grid para 12 colunas incluindo Ações */}
                         <div className="hidden md:grid md:grid-cols-12 gap-4 p-4 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                             <div className="col-span-1">ID</div>
-                            {/* Muda o título da coluna dinamicamente */}
-                            <div className="col-span-4">{isFornecedor ? "Produto / Cliente" : "Cliente / Detalhes"}</div>
-                            <div className="col-span-3">Data</div>
+                            <div className="col-span-3">{isFornecedor ? "Produto / Cliente" : "Loja / Detalhes"}</div>
+                            <div className="col-span-2">Data</div>
                             <div className="col-span-2">Status</div>
                             <div className="col-span-2 text-right">{isFornecedor ? "Faturamento" : "Total"}</div>
+                            <div className="col-span-2 text-center">Ações</div>
                         </div>
 
                         <div className="divide-y divide-gray-200">
                             {filtered.map((pRaw, index) => {
-                                // Normaliza os dados dentro do map para exibição
                                 const item = normalizeData(pRaw);
+                                const isCancellable = canCancel(item.status);
 
                                 return (
                                     <div key={`${item.id}-${index}`} className="p-4 hover:bg-gray-50 transition-colors flex flex-col md:grid md:grid-cols-12 gap-4 items-center">
@@ -166,31 +169,32 @@ export default function OrderList({
                                             <span className="font-mono font-bold text-gray-900">#{item.id}</span>
                                         </div>
 
-                                        {/* Info Principal (Produto ou Cliente) */}
-                                        <div className="w-full md:w-auto md:col-span-4 flex items-center gap-3">
+                                        {/* Info Principal */}
+                                        <div className="w-full md:w-auto md:col-span-3 flex items-center gap-3">
                                             <div className="bg-purple-100 p-2 rounded-full hidden sm:block">
                                                 {isFornecedor ? <Package className="w-4 h-4 text-brand-purple" /> : <User className="w-4 h-4 text-brand-purple" />}
                                             </div>
                                             <div>
-                                                <p className="font-medium text-gray-900">{item.mainInfo}</p>
-                                                <p className="text-xs text-gray-500">{item.subInfo}</p>
+                                                <p className="font-medium text-gray-900 truncate" title={item.mainInfo}>{item.mainInfo}</p>
+                                                <p className="text-xs text-gray-500 truncate" title={item.subInfo}>{item.subInfo}</p>
                                             </div>
                                         </div>
 
                                         {/* Data */}
-                                        <div className="w-full md:w-auto md:col-span-3 flex items-center gap-2 text-sm text-gray-600">
+                                        <div className="w-full md:w-auto md:col-span-2 flex items-center gap-2 text-sm text-gray-600">
                                             <Calendar className="w-4 h-4 text-gray-400 md:hidden" />
-                                            {item.data ? new Date(item.data).toLocaleDateString('pt-BR') : "Data N/A"}
+                                            {item.data ? new Date(item.data).toLocaleDateString('pt-BR') : "N/A"}
                                         </div>
 
                                         {/* Status */}
-                                        <div className="w-full md:w-auto md:col-span-2">
-                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(item.status)}`}>
-                                            {item.status || "Pendente"}
-                                        </span>
+                                        <div className="w-full md:w-auto md:col-span-2 flex justify-between md:block">
+                                            <span className="md:hidden text-sm text-gray-600">Status:</span>
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(item.status)}`}>
+                                                {item.status || "Pendente"}
+                                            </span>
                                         </div>
 
-                                        {/* Total / Faturamento */}
+                                        {/* Total */}
                                         <div className="w-full md:w-auto md:col-span-2 flex justify-between md:block md:text-right">
                                             <span className="md:hidden text-sm text-gray-600">Valor:</span>
                                             <div className="font-bold text-gray-900 flex items-center justify-end gap-1">
@@ -198,6 +202,25 @@ export default function OrderList({
                                                 {formatCurrency(item.total || 0)}
                                             </div>
                                         </div>
+
+                                        {/* Ações */}
+                                        <div className="w-full md:w-auto md:col-span-2 flex justify-center mt-4 md:mt-0">
+                                            {onCancel && isCancellable ? (
+                                                <button
+                                                    onClick={() => onCancel(item.id)}
+                                                    className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-md transition-colors w-full md:w-auto justify-center"
+                                                >
+                                                    <XCircle className="w-4 h-4" />
+                                                    Cancelar
+                                                </button>
+                                            ) : (
+                                                <span className="text-xs text-gray-400 italic flex items-center gap-1">
+                                                     {item.status === 'CANCELADO' ? <Ban className="w-3 h-3"/> : ''}
+                                                    {item.status === 'CANCELADO' ? 'Cancelado' : '-'}
+                                                </span>
+                                            )}
+                                        </div>
+
                                     </div>
                                 )})}
                         </div>
