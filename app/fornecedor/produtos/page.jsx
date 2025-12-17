@@ -2,18 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Loader2 } from 'lucide-react';
 import { API_BASE_URL } from "@/app/utils/api-config";
 import ProductList from "@/app/components/ProductList";
-import {router} from "next/client";
-import {useRouter} from "next/navigation";
 
 export default function ProdutosPageFornecedor() {
     const { data: session, status } = useSession();
+    const router = useRouter();
     const [produtos, setProdutos] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
-    const router = useRouter();
 
     // --- PROTEÇÃO DE ROTA ---
     useEffect(() => {
@@ -29,7 +28,11 @@ export default function ProdutosPageFornecedor() {
             const res = await fetch(`${API_BASE_URL}/api/produtos/produtos-vendedor`, {
                 headers: { 'Authorization': `Bearer ${session?.user?.token}` }
             });
-            if (res.ok) setProdutos(await res.json());
+            if (res.ok) {
+                setProdutos(await res.json());
+            }
+        } catch (error) {
+            console.error("Erro ao buscar produtos:", error);
         } finally {
             setLoading(false);
         }
@@ -49,10 +52,14 @@ export default function ProdutosPageFornecedor() {
         }
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
+    if (loading) return (
+        <div className="min-h-screen flex items-center justify-center bg-page-bg dark:bg-slate-900 transition-colors duration-200">
+            <Loader2 className="animate-spin text-brand-purple dark:text-purple-400 w-10 h-10" />
+        </div>
+    );
 
     return (
-        <div className="min-h-screen bg-page-bg py-8 px-4 container mx-auto">
+        <div className="min-h-screen bg-page-bg dark:bg-slate-900 transition-colors duration-200 py-8 px-4 container mx-auto">
             <ProductList
                 produtos={produtos}
                 loading={loading}
