@@ -124,28 +124,33 @@ export default function CarrinhoPage() {
         }
     };
 
-    if (cartItems.length === 0) return <div className="p-10 text-center text-gray-500">Seu carrinho está vazio.</div>;
+    if (cartItems.length === 0) return (
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-gray-500 dark:text-gray-400">
+            <p className="text-xl font-medium">Seu carrinho está vazio.</p>
+        </div>
+    );
 
     const formatCurrency = (value) => new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(value);
 
     return (
-        <div className="container mx-auto p-4 min-h-screen bg-page-bg">
-            <h1 className="text-2xl font-bold mb-6 text-gray-800">Seu Carrinho</h1>
-            <div className="bg-white rounded-lg shadow p-6">
+        <div className="container mx-auto p-4 min-h-screen bg-page-bg dark:bg-slate-900 transition-colors duration-200">
+            <h1 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100">Seu Carrinho</h1>
+
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6 border border-gray-100 dark:border-slate-700 transition-colors duration-200">
                 {cartItems.map((item) => (
-                    <div key={item.id} className="flex flex-col md:flex-row justify-between items-center border-b border-gray-100 py-4 gap-4">
+                    <div key={item.id} className="flex flex-col md:flex-row justify-between items-center border-b border-gray-100 dark:border-slate-700 py-4 gap-4">
                         <div className="flex-1">
-                            <h3 className="font-semibold text-lg text-gray-800">{item.nome}</h3>
-                            <p className="text-sm text-gray-500">
+                            <h3 className="font-semibold text-lg text-gray-800 dark:text-gray-100">{item.nome}</h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
                                 Unitário: {formatCurrency(item.preco)}
                             </p>
                         </div>
 
-                        <div className="flex items-center border border-gray-300 rounded-md">
+                        <div className="flex items-center border border-gray-300 dark:border-slate-600 rounded-md">
                             <button
                                 onClick={() => updateItemQuantity(item.id, item.quantity - 1)}
                                 disabled={item.quantity <= 1}
-                                className="p-2 hover:bg-gray-100 text-gray-600 disabled:opacity-30 transition"
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-600 dark:text-gray-300 disabled:opacity-30 transition"
                             >
                                 <Minus size={16} />
                             </button>
@@ -157,23 +162,23 @@ export default function CarrinhoPage() {
                                     const val = parseInt(e.target.value);
                                     if (!isNaN(val) && val >= 1) updateItemQuantity(item.id, val);
                                 }}
-                                className="w-12 text-center border-x border-gray-300 py-1 focus:outline-none text-gray-700 font-medium"
+                                className="w-12 text-center border-x border-gray-300 dark:border-slate-600 py-1 focus:outline-none text-gray-700 dark:text-gray-200 font-medium bg-transparent"
                             />
                             <button
                                 onClick={() => updateItemQuantity(item.id, item.quantity + 1)}
-                                className="p-2 hover:bg-gray-100 text-gray-600 transition"
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-600 dark:text-gray-300 transition"
                             >
                                 <Plus size={16} />
                             </button>
                         </div>
 
                         <div className="flex items-center gap-6 min-w-[150px] justify-end">
-                            <span className="font-bold text-gray-900">
+                            <span className="font-bold text-gray-900 dark:text-white">
                                 {formatCurrency(item.preco * item.quantity)}
                             </span>
                             <button
                                 onClick={() => removeFromCart(item.id)}
-                                className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-full transition"
+                                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition"
                                 title="Remover item"
                             >
                                 <Trash2 size={20} />
@@ -184,11 +189,11 @@ export default function CarrinhoPage() {
 
                 <div className="mt-8 flex flex-col md:flex-row gap-8 justify-between items-start">
                     <div className="w-full md:w-1/3 space-y-2">
-                        <label className="text-sm font-medium text-gray-700">Cupom de Desconto</label>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Cupom de Desconto</label>
                         <div className="flex gap-2">
                             <div className="relative w-full">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Tag className="text-gray-400" size={18} />
+                                    <Tag className="text-gray-400 dark:text-gray-500" size={18} />
                                 </div>
                                 <input
                                     type="text"
@@ -196,9 +201,11 @@ export default function CarrinhoPage() {
                                     value={codigoCupom}
                                     onChange={(e) => setCodigoCupom(e.target.value)}
                                     disabled={!!cupomAplicado}
-                                    className={`pl-10 w-full border rounded-lg py-2 px-4 focus:outline-none focus:ring-2 transition text-gray-700 ${
-                                        erroCupom ? 'border-red-300 focus:ring-red-200' : 'border-gray-300 focus:ring-green-500'
-                                    } ${cupomAplicado ? 'bg-gray-100' : ''}`}
+                                    className={`pl-10 w-full border rounded-lg py-2 px-4 focus:outline-none focus:ring-2 transition text-gray-700 dark:text-gray-100 dark:bg-slate-900 dark:placeholder-gray-500 ${
+                                        erroCupom
+                                            ? 'border-red-300 focus:ring-red-200 dark:border-red-500/50'
+                                            : 'border-gray-300 focus:ring-green-500 dark:border-slate-600'
+                                    } ${cupomAplicado ? 'bg-gray-100 dark:bg-slate-700 opacity-70' : ''}`}
                                 />
                             </div>
 
@@ -206,14 +213,14 @@ export default function CarrinhoPage() {
                                 <button
                                     onClick={verificarCupom}
                                     disabled={loadingCupom || !codigoCupom}
-                                    className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 disabled:opacity-50 transition flex items-center gap-2"
+                                    className="bg-gray-800 dark:bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-gray-700 dark:hover:bg-slate-600 disabled:opacity-50 transition flex items-center gap-2"
                                 >
                                     {loadingCupom ? <Loader2 className="animate-spin" size={18}/> : "Aplicar"}
                                 </button>
                             ) : (
                                 <button
                                     onClick={removerCupom}
-                                    className="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition font-medium"
+                                    className="bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-300 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition font-medium"
                                 >
                                     Remover
                                 </button>
@@ -221,26 +228,26 @@ export default function CarrinhoPage() {
                         </div>
 
                         {erroCupom && (
-                            <p className="text-red-500 text-sm flex items-center gap-1 mt-1">
+                            <p className="text-red-500 dark:text-red-400 text-sm flex items-center gap-1 mt-1">
                                 <XCircle size={14} /> {erroCupom}
                             </p>
                         )}
                         {cupomAplicado && (
-                            <p className="text-green-600 text-sm flex items-center gap-1 mt-1">
+                            <p className="text-green-600 dark:text-green-400 text-sm flex items-center gap-1 mt-1">
                                 <CheckCircle size={14} /> Cupom &#34;{cupomAplicado.codigo}&#34; aplicado!
                             </p>
                         )}
                     </div>
 
-                    <div className="w-full md:w-1/3 bg-gray-50 p-6 rounded-lg border border-gray-100">
+                    <div className="w-full md:w-1/3 bg-gray-50 dark:bg-slate-700/30 p-6 rounded-lg border border-gray-100 dark:border-slate-700">
                         <div className="space-y-3">
-                            <div className="flex justify-between text-gray-600">
+                            <div className="flex justify-between text-gray-600 dark:text-gray-300">
                                 <span>Subtotal</span>
                                 <span>{formatCurrency(cartTotal)}</span>
                             </div>
 
                             {cupomAplicado && (
-                                <div className="flex justify-between text-green-600 font-medium">
+                                <div className="flex justify-between text-green-600 dark:text-green-400 font-medium">
                                     <span>
                                         Desconto ({cupomAplicado.tipoDesconto === 'PERCENTAGEM'
                                         ? `${cupomAplicado.valorDesconto}%`
@@ -250,8 +257,8 @@ export default function CarrinhoPage() {
                                 </div>
                             )}
 
-                            <div className="border-t border-gray-200 pt-3 mt-3">
-                                <div className="flex justify-between text-xl font-bold text-gray-800">
+                            <div className="border-t border-gray-200 dark:border-slate-600 pt-3 mt-3">
+                                <div className="flex justify-between text-xl font-bold text-gray-800 dark:text-white">
                                     <span>Total</span>
                                     <span>{formatCurrency(totalFinal)}</span>
                                 </div>
@@ -261,7 +268,7 @@ export default function CarrinhoPage() {
                         <button
                             onClick={finalizarCompra}
                             disabled={cartItems.length === 0}
-                            className="w-full mt-6 bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition font-semibold shadow-lg shadow-green-200 disabled:opacity-50"
+                            className="w-full mt-6 bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition font-semibold shadow-lg shadow-green-200 dark:shadow-green-900/20 disabled:opacity-50"
                         >
                             Finalizar Compra
                         </button>

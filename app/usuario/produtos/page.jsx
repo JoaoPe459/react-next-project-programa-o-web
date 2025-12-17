@@ -48,15 +48,19 @@ export default function ProdutosPageUsuario() {
         alert(`${produto.nome} adicionado ao carrinho!`);
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
+    if (loading) return (
+        <div className="min-h-screen flex items-center justify-center bg-page-bg dark:bg-slate-900 transition-colors duration-200">
+            <Loader2 className="animate-spin text-brand-purple dark:text-purple-400 w-10 h-10" />
+        </div>
+    );
 
     return (
-        <div className="min-h-screen bg-page-bg py-8 px-4 container mx-auto">
+        <div className="min-h-screen bg-page-bg dark:bg-slate-900 transition-colors duration-200 py-8 px-4 container mx-auto">
             <ProductList
                 produtos={produtos}
                 loading={loading}
                 isFornecedor={false}
-                onAddToCart={handleAddToCart} // Passa a nova função
+                onAddToCart={handleAddToCart}
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
             />
