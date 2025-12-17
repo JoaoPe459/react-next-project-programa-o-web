@@ -16,6 +16,7 @@ import {
     X,
     Ticket // Ícone para cupons
 } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 
 export default function Header() {
     const { data: session, status } = useSession();
@@ -127,6 +128,8 @@ export default function Header() {
                     </nav>
 
                     <div className="hidden md:flex items-center space-x-6">
+                        <ThemeToggle />
+
                         {isLoading ? (
                             <div className="h-8 w-8 bg-white/10 animate-pulse rounded-full"></div>
                         ) : isAuthenticated ? (
@@ -150,7 +153,7 @@ export default function Header() {
                         )}
                     </div>
 
-                    <div className="md:hidden flex items-center">
+                    <div className="md:hidden flex items-center gap-4">
                         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-300 hover:text-white p-2">
                             {isMobileMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
                         </button>
@@ -172,7 +175,13 @@ export default function Header() {
                         </div>
                     )}
                     <nav className="flex flex-col space-y-2">{renderNavLinks(true)}</nav>
+
                     <div className="mt-6 pt-6 border-t border-white/10">
+                        <div className="flex items-center justify-between px-4 mb-4">
+                            <span className="text-gray-400 text-sm font-medium">Tema do App</span>
+                            <ThemeToggle />
+                        </div>
+
                         {isAuthenticated ? (
                             <button onClick={handleLogout} className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-red-400 bg-red-400/10 hover:bg-red-400/20 rounded-lg transition-colors font-medium">
                                 <LogOut className="w-5 h-5" /> <span>Sair da Conta</span>
