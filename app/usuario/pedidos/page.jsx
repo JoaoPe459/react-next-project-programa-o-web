@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from 'next/link';
@@ -17,23 +17,17 @@ export default function PedidosPageUsuario() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filtroStatus, setFiltroStatus] = useState('todos');
 
-    // --- PROTEÇÃO DE ROTA ---
-    useEffect(() => {
-        if (status === "loading") return;
-        if (status === "unauthenticated" || session?.user?.role !== "ROLE_USUARIO") {
-            router.push("/");
-        }
-        fetchPedidos()
-    }, [status, session, router]);
+    const fetchPedidos = useCallback(async () => {
+        if (!session?.user?.token) return;
 
-    const fetchPedidos = async () => {
         try {
+            setLoading(true);
             const res = await fetch(`${API_BASE_URL}/api/pedidos`, {
                 headers: { 'Authorization': `Bearer ${session.user.token}` }
             });
+
             if (res.ok) {
                 const data = await res.json();
-                // Garante que é array e ordena por ID descrescente (mais recentes primeiro)
                 const sorted = Array.isArray(data) ? data.sort((a, b) => b.id - a.id) : [];
                 setPedidos(sorted);
             } else {
@@ -45,20 +39,31 @@ export default function PedidosPageUsuario() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [session?.user?.token]);
+
+    useEffect(() => {
+        if (status === "loading") return;
+
+        if (status === "unauthenticated" || session?.user?.role !== "ROLE_USUARIO") {
+            router.push("/");
+            return;
+        }
+
+        fetchPedidos();
+    }, [status, session, router, fetchPedidos]);
 
     const handleCancelOrder = async (id) => {
-        if (!confirm(`Tem certeza que deseja cancelar o pedido #${id}? Esta ação não pode ser desfeita.`)) return;
+        // Substituir o confirm nativo por um modal customizado no futuro melhora a UX
+        if (!confirm(`Tem certeza que deseja cancelar o pedido #${id}?`)) return;
 
         try {
             const res = await fetch(`${API_BASE_URL}/api/pedidos/${id}`, {
-                method: 'POST',
+                method: 'POST', // Geralmente cancelamentos usame PATCH ou PUT, mas mantive seu padrão
                 headers: { 'Authorization': `Bearer ${session.user.token}` }
             });
 
             if (res.ok) {
                 toast.success("Pedido cancelado com sucesso!");
-                // Atualiza a lista localmente para refletir a mudança sem recarregar tudo
                 setPedidos(prev => prev.map(p =>
                     p.id === id ? { ...p, status: 'CANCELADO' } : p
                 ));
@@ -94,7 +99,7 @@ export default function PedidosPageUsuario() {
                     setFiltroStatus={setFiltroStatus}
                     title="Minhas Compras"
                     emptyStateAction={emptyAction}
-                    onCancel={handleCancelOrder} // Passando a função de cancelar
+                    onCancel={handleCancelOrder}
                 />
             </main>
         </div>

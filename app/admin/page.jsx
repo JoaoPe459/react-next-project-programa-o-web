@@ -22,8 +22,8 @@ export default function AdminDashboard() {
 
     if (status === "loading") {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-page-bg">
-                <Loader2 className="animate-spin w-8 h-8 text-brand-purple"/>
+            <div className="min-h-screen flex items-center justify-center bg-page-bg dark:bg-slate-900 transition-colors duration-200">
+                <Loader2 className="animate-spin w-8 h-8 text-brand-purple dark:text-purple-400"/>
             </div>
         );
     }
@@ -31,32 +31,32 @@ export default function AdminDashboard() {
     if (!session) return null;
 
     return (
-        <div className="min-h-screen bg-page-bg font-sans p-8 container mx-auto">
-            <h1 className="text-3xl font-bold text-gray-800 mb-8 flex items-center gap-2">
-                <LayoutDashboard className="w-8 h-8 text-brand-purple" />
+        <div className="min-h-screen bg-page-bg dark:bg-slate-900 font-sans p-8 container mx-auto transition-colors duration-200">
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8 flex items-center gap-2">
+                <LayoutDashboard className="w-8 h-8 text-brand-purple dark:text-purple-400" />
                 Painel Administrativo
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Card Cupons */}
-                <Link href="/admin/cupons" className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100 flex items-center justify-between group cursor-pointer">
+                <Link href="/admin/cupons" className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-slate-700 flex items-center justify-between group cursor-pointer">
                     <div>
-                        <p className="text-gray-500 text-sm font-medium uppercase">Promoções</p>
-                        <p className="text-xl font-bold text-gray-800 mt-1">Gerenciar Cupons</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase">Promoções</p>
+                        <p className="text-xl font-bold text-gray-800 dark:text-white mt-1">Gerenciar Cupons</p>
                     </div>
-                    <div className="bg-purple-50 p-3 rounded-full group-hover:bg-brand-purple group-hover:text-white transition">
-                        <Ticket className="w-8 h-8 text-brand-purple group-hover:text-white" />
+                    <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-full group-hover:bg-brand-purple group-hover:text-white dark:group-hover:bg-purple-600 transition-colors">
+                        <Ticket className="w-8 h-8 text-brand-purple dark:text-purple-400 group-hover:text-white" />
                     </div>
                 </Link>
 
                 {/* Card Usuários - ATUALIZADO */}
-                <Link href="/admin/usuarios" className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100 flex items-center justify-between group cursor-pointer">
+                <Link href="/admin/usuarios" className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-slate-700 flex items-center justify-between group cursor-pointer">
                     <div>
-                        <p className="text-gray-500 text-sm font-medium uppercase">Usuários</p>
-                        <p className="text-xl font-bold text-gray-800 mt-1">Contas</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase">Usuários</p>
+                        <p className="text-xl font-bold text-gray-800 dark:text-white mt-1">Contas</p>
                     </div>
-                    <div className="bg-blue-50 p-3 rounded-full group-hover:bg-blue-600 group-hover:text-white transition">
-                        <Users className="w-8 h-8 text-blue-600 group-hover:text-white" />
+                    <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-full group-hover:bg-blue-600 group-hover:text-white dark:group-hover:bg-blue-500 transition-colors">
+                        <Users className="w-8 h-8 text-blue-600 dark:text-blue-400 group-hover:text-white" />
                     </div>
                 </Link>
             </div>
