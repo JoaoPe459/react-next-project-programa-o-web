@@ -39,11 +39,7 @@ export default function LoginPage() {
 
         const { token, role, id, email } = session.user;
 
-        console.log("Token:", token);
-        console.log("Role:", role);
-        console.log("ID:", id);
-        console.log("Email:", email);
-
+        // Salvar no localStorage (Opcional, pois o NextAuth já gerencia a sessão)
         localStorage.setItem("authToken", token);
         localStorage.setItem("authRole", role);
         localStorage.setItem("authId", id);
@@ -63,29 +59,33 @@ export default function LoginPage() {
         }
 
         router.refresh();
-}
+    }
 
     return (
-        <div className="flex justify-center items-center min-h-[calc(100vh-5rem)] bg-page-bg font-sans py-12 px-4">
+        <div className="flex justify-center items-center min-h-[calc(100vh-5rem)] bg-page-bg dark:bg-slate-900 font-sans py-12 px-4 transition-colors duration-200">
             <Toaster position="top-right" />
-            <div className="w-full max-w-md bg-white border border-gray-200 shadow-xl rounded-xl p-8">
+
+            {/* Card com adaptação dark mode */}
+            <div className="w-full max-w-md bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-xl rounded-xl p-8 transition-colors duration-200">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Bem-vindo</h1>
-                    <p className="text-gray-500 text-sm">Insira suas credenciais para acessar</p>
+                    <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">Bem-vindo</h1>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">Insira suas credenciais para acessar</p>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-1">
-                        <label className="block text-sm font-medium text-gray-700 ml-1">Email</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Email</label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <User className="h-5 w-5 text-gray-400" />
+                                <User className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                             </div>
                             <input
                                 type="text"
                                 placeholder="exemplo@email.com"
                                 disabled={loading}
-                                className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-purple focus:border-transparent transition-all ${errors.email ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'}`}
+                                className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-purple focus:border-transparent transition-all 
+                                bg-white dark:bg-slate-900 dark:text-white dark:placeholder-gray-500 dark:border-slate-600
+                                ${errors.email ? 'border-red-500 ring-1 ring-red-500 dark:border-red-500' : 'border-gray-300'}`}
                                 {...register("email", { required: "Digite seu e-mail" })}
                             />
                         </div>
@@ -93,16 +93,18 @@ export default function LoginPage() {
                     </div>
 
                     <div className="space-y-1">
-                        <label className="block text-sm font-medium text-gray-700 ml-1">Senha</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Senha</label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Lock className="h-5 w-5 text-gray-400" />
+                                <Lock className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                             </div>
                             <input
                                 type="password"
                                 placeholder="••••••••"
                                 disabled={loading}
-                                className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-purple focus:border-transparent transition-all ${errors.password ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'}`}
+                                className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-purple focus:border-transparent transition-all
+                                bg-white dark:bg-slate-900 dark:text-white dark:placeholder-gray-500 dark:border-slate-600
+                                ${errors.password ? 'border-red-500 ring-1 ring-red-500 dark:border-red-500' : 'border-gray-300'}`}
                                 {...register("password", { required: "Digite sua senha" })}
                             />
                         </div>
@@ -112,16 +114,16 @@ export default function LoginPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-brand-purple hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-purple transition-all disabled:opacity-70"
+                        className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-brand-purple hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-purple transition-all disabled:opacity-70 dark:ring-offset-slate-800"
                     >
                         {loading ? <Loader2 className="animate-spin -ml-1 mr-2 h-5 w-5" /> : <LogIn className="-ml-1 mr-2 h-5 w-5" />}
                         {loading ? 'Entrando...' : 'Entrar'}
                     </button>
 
-                    <div className="text-center text-sm text-gray-600 mt-6">
+                    <div className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
                         <p>
                             Não tem uma conta?{' '}
-                            <Link href="/register" className="font-medium text-brand-purple hover:text-purple-700 hover:underline">
+                            <Link href="/register" className="font-medium text-brand-purple hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 hover:underline">
                                 Cadastre-se gratuitamente
                             </Link>
                         </p>
