@@ -62,8 +62,8 @@ export default function CuponsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-page-bg">
-                <Loader2 className="w-10 h-10 animate-spin text-brand-purple" />
+            <div className="min-h-screen flex items-center justify-center bg-page-bg dark:bg-slate-900 transition-colors duration-200">
+                <Loader2 className="w-10 h-10 animate-spin text-brand-purple dark:text-purple-400" />
             </div>
         );
     }
@@ -72,30 +72,30 @@ export default function CuponsPage() {
     if (session?.user?.role !== "ROLE_ADMIN") return null;
 
     return (
-        <div className="min-h-screen bg-page-bg font-sans p-8">
+        <div className="min-h-screen bg-page-bg dark:bg-slate-900 font-sans p-8 transition-colors duration-200">
             <Toaster position="top-right" />
             <div className="container mx-auto max-w-5xl">
                 <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-                        <Ticket className="w-8 h-8 text-brand-purple" />
+                    <h1 className="text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                        <Ticket className="w-8 h-8 text-brand-purple dark:text-purple-400" />
                         Gerenciar Cupons
                     </h1>
-                    <Link href="/admin/cupons/novo" className="flex items-center gap-2 bg-brand-purple text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition">
+                    <Link href="/admin/cupons/novo" className="flex items-center gap-2 bg-brand-purple text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition shadow-lg dark:shadow-purple-900/20">
                         <Plus className="w-5 h-5" />
                         Novo Cupom
                     </Link>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden transition-colors duration-200">
                     {cupons.length === 0 ? (
-                        <div className="p-12 text-center text-gray-500">
+                        <div className="p-12 text-center text-gray-500 dark:text-gray-400">
                             <CalendarOff className="w-12 h-12 mx-auto mb-3 opacity-50" />
                             <p>Nenhum cupom cadastrado.</p>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="bg-gray-50 text-gray-600 font-semibold text-sm uppercase">
+                                <thead className="bg-gray-50 dark:bg-slate-900/50 text-gray-600 dark:text-gray-300 font-semibold text-sm uppercase">
                                 <tr>
                                     <th className="px-6 py-4">Código</th>
                                     <th className="px-6 py-4">Desconto</th>
@@ -103,27 +103,27 @@ export default function CuponsPage() {
                                     <th className="px-6 py-4 text-center">Ações</th>
                                 </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100">
+                                <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
                                 {cupons.map((cupom) => (
-                                    <tr key={cupom.id} className="hover:bg-gray-50 transition">
-                                        <td className="px-6 py-4 font-mono font-bold text-brand-purple">
+                                    <tr key={cupom.id} className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition">
+                                        <td className="px-6 py-4 font-mono font-bold text-brand-purple dark:text-purple-400">
                                             {cupom.codigo}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4 text-gray-800 dark:text-gray-200">
                                             {cupom.tipoDesconto === 'PERCENTAGEM'
                                                 ? `${cupom.valorDesconto}%`
                                                 : `Kz ${cupom.valorDesconto}`}
                                         </td>
-                                        <td className="px-6 py-4 text-gray-600">
+                                        <td className="px-6 py-4 text-gray-600 dark:text-gray-400">
                                             {cupom.dataValidade || "Sem validade"}
                                         </td>
                                         <td className="px-6 py-4 flex justify-center gap-3">
-                                            <Link href={`/admin/cupons/${cupom.id}/editar`} className="text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-blue-50">
+                                            <Link href={`/admin/cupons/${cupom.id}/editar`} className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
                                                 <Edit className="w-5 h-5" />
                                             </Link>
                                             <button
                                                 onClick={() => handleDelete(cupom.id)}
-                                                className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50"
+                                                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                             >
                                                 <Trash2 className="w-5 h-5" />
                                             </button>
