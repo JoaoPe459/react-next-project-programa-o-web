@@ -58,7 +58,7 @@ export default function PedidosPageUsuario() {
 
         try {
             const res = await fetch(`${API_BASE_URL}/api/pedidos/${id}`, {
-                method: 'POST', // Geralmente cancelamentos usame PATCH ou PUT, mas mantive seu padrão
+                method: 'POST',
                 headers: { 'Authorization': `Bearer ${session.user.token}` }
             });
 
@@ -79,17 +79,35 @@ export default function PedidosPageUsuario() {
     const emptyAction = (
         <Link
             href="/usuario/produtos"
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-brand-purple hover:bg-opacity-90 transition-all"
+            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-brand-purple hover:bg-opacity-90 dark:hover:bg-purple-600 transition-all"
         >
             Ir para a Loja
             <ArrowRight className="ml-2 -mr-1 h-5 w-5" />
         </Link>
     );
 
+    if (status === "loading") {
+        return (
+            <div className="flex flex-col min-h-screen items-center justify-center bg-page-bg dark:bg-slate-900 transition-colors duration-300">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-purple"></div>
+            </div>
+        );
+    }
+
     return (
-        <div className="flex flex-col min-h-screen font-sans bg-page-bg">
-            <Toaster position="top-right" />
-            <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col min-h-screen font-sans bg-page-bg dark:bg-slate-900 transition-colors duration-300">
+            <Toaster
+                position="top-right"
+                toastOptions={{
+                    className: 'dark:bg-slate-800 dark:text-white',
+                    style: {
+                        background: '#333',
+                        color: '#fff',
+                    },
+                }}
+            />
+
+            <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-gray-800 dark:text-gray-100">
                 <OrderList
                     pedidos={pedidos}
                     loading={loading}
