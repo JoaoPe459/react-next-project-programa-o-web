@@ -2,7 +2,8 @@
 
 import { useSession } from "next-auth/react";
 import Link from 'next/link';
-import {Ticket, LayoutDashboard, Users, TrendingUp, Loader2} from 'lucide-react';
+import Image from 'next/image';
+import {Ticket, LayoutDashboard, TrendingUp, Loader2} from 'lucide-react';
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 
@@ -12,11 +13,10 @@ export default function AdminDashboard() {
     const router = useRouter();
     const [stats, setStats] = useState({ produtos: 0, pedidos: 0 });
 
-    // --- PROTEÇÃO DE ROTA ---
     useEffect(() => {
         if (status === "loading") return;
         if (status === "unauthenticated" || session?.user?.role !== "ROLE_ADMIN") {
-            router.push("/"); // Manda para home se não for admin
+            router.push("/");
         }
     }, [status, session, router]);
 
@@ -38,8 +38,7 @@ export default function AdminDashboard() {
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Card Cupons */}
-                <Link href="/admin/cupons" className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-slate-700 flex items-center justify-between group cursor-pointer">
+                <Link href="/admin/cupons" className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center justify-between group cursor-pointer">
                     <div>
                         <p className="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase">Promoções</p>
                         <p className="text-xl font-bold text-gray-800 dark:text-white mt-1">Gerenciar Cupons</p>
@@ -48,15 +47,19 @@ export default function AdminDashboard() {
                         <Ticket className="w-8 h-8 text-brand-purple dark:text-purple-400 group-hover:text-white" />
                     </div>
                 </Link>
-
-                {/* Card Usuários - ATUALIZADO */}
-                <Link href="/admin/usuarios" className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-100 dark:border-slate-700 flex items-center justify-between group cursor-pointer">
+                <Link href="/admin/usuarios" className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center justify-between group cursor-pointer">
                     <div>
                         <p className="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase">Usuários</p>
                         <p className="text-xl font-bold text-gray-800 dark:text-white mt-1">Contas</p>
                     </div>
-                    <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-full group-hover:bg-blue-600 group-hover:text-white dark:group-hover:bg-blue-500 transition-colors">
-                        <Users className="w-8 h-8 text-blue-600 dark:text-blue-400 group-hover:text-white" />
+                    <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-full group-hover:bg-blue-600 dark:group-hover:bg-blue-500 transition-colors flex items-center justify-center">
+                        <Image
+                            src="/gadelha.png"
+                            alt="Gadelha"
+                            width={48}
+                            height={48}
+                            className="rounded-full object-cover"
+                        />
                     </div>
                 </Link>
             </div>
