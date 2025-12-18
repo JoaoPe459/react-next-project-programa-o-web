@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -97,13 +98,6 @@ export default function Header() {
             );
         }
 
-        // Visitante
-        return (
-            <Link href="/usuario/produtos" className={`${baseClass} ${isActive('/produtos') ? activeClass : ''}`} onClick={() => mobile && setIsMobileMenuOpen(false)}>
-                <Store className="w-5 h-5" />
-                <span>Explorar Loja</span>
-            </Link>
-        );
     };
 
     return (
@@ -112,13 +106,18 @@ export default function Header() {
                 <div className="flex items-center justify-between h-20">
 
                     <Link href="/" className="flex items-center space-x-3 group">
-                        <div className="bg-amber-400 p-2.5 rounded-lg shadow-lg shadow-amber-400/20 group-hover:scale-105 transition-transform duration-300">
-                            <svg className="w-6 h-6 text-header-bg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                            </svg>
+                        <div className="relative h-10 w-14 shadow-lg shadow-amber-400/10 group-hover:scale-105 transition-transform duration-300 rounded-lg overflow-hidden border-2 border-amber-400/50">
+                            <Image
+                                src="/AngolaFlag.webp"
+                                alt="Bandeira de Angola"
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                priority
+                            />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-xl font-bold text-white leading-tight tracking-tight">WoMart</span>
+                            <span className="text-xl font-bold text-white leading-tight tracking-tight">WartMart</span>
                             <span className="text-[10px] text-gray-400 font-medium tracking-widest uppercase">Angola</span>
                         </div>
                     </Link>
